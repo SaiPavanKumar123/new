@@ -4,10 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSON Display</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
     <h1>JSON Display</h1>
-    <pre id="json-output"></pre>
+    <table id="json-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Image</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 
     <script>
         const jsonString = `
@@ -33,38 +55,19 @@
             ]
         `;
 
-        const displayJson = (jsonString) => {
-            try {
-                const jsonData = JSON.parse(jsonString);
-                const table = document.createElement('table');
-                table.innerHTML = `
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Image</th>
-                    </tr>
-                `;
+        const jsonData = JSON.parse(jsonString);
+        const tableBody = document.querySelector('#json-table tbody');
 
-                jsonData.forEach(item => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${item.id}</td>
-                        <td>${item.name}</td>
-                        <td>${item.price}</td>
-                        <td>${item.image}</td>
-                    `;
-                    table.appendChild(row);
-                });
-
-                document.getElementById('json-output').appendChild(table);
-            } catch (error) {
-                console.error('Error parsing JSON:', error);
-            }
-        };
-
-        // Call the displayJson function with the provided JSON string
-        displayJson(jsonString);
+        jsonData.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.id}</td>
+                <td>${item.name}</td>
+                <td>${item.price}</td>
+                <td>${item.image}</td>
+            `;
+            tableBody.appendChild(row);
+        });
     </script>
 </body>
 </html>
