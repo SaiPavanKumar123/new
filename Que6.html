@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSON Display</title>
+    
     <style>
         table {
             border-collapse: collapse;
@@ -23,34 +23,31 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Name</th>
+                <th>authors</th>
                 <th>Price</th>
-                <th>Image</th>
+                <th>publish_date</th>
+	<th>title_</th>
             </tr>
         </thead>
-        <tbody></tbody>
+        <tbody>
     </table>
 
     <script>
         const jsonString = `
             [
                 {
-                    "id": 1,
-                    "name": "Product 1",
-                    "price": 10.99,
-                    "image": "product1.jpg"
+                    "id": 101,
+                    "authors": "Grambell, Matthew",
+                    "price": 650,
+                    "publish_date": "2000-10-01",
+	    "title_": "book1"
                 },
-                {
-                    "id": 2,
-                    "name": "Product 2",
-                    "price": 15.99,
-                    "image": "product2.jpg"
-                },
-                {
-                    "id": 3,
-                    "name": "Product 3",
-                    "price": 5.99,
-                    "image": "product3.jpg"
+               {
+                    "id": 102,
+                    "authors": "Rails, Kim",
+                    "price": 225,
+                    "publish_date": "2000-12-16",
+	    "title_": "book2"
                 }
             ]
         `;
@@ -62,9 +59,10 @@
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${item.id}</td>
-                <td>${item.name}</td>
+                <td>${item.authors}</td>
                 <td>${item.price}</td>
-                <td>${item.image}</td>
+                <td>${item.publish_date}</td>
+	<td>${item.title_}</td>
             `;
             tableBody.appendChild(row);
         });
