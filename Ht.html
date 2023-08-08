@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Functionality</title>
+</head>
+<body>
+    <h1>Browser Functionality Simulation</h1>
+    
+    <a href="#" id="back-link">Back</a>
+    <a href="#" id="next-link">Next</a>
+    <a href="https://www.nkxgen.com" id="redirect-link">Redirect to NKXGEN</a>
+    <a href="#" id="history-link">Show History</a>
+    <a href="#" id="reload-link">Reload</a>
+    
+    <script>
+        // Back link functionality
+        document.getElementById('back-link').addEventListener('click', function() {
+            window.history.back();
+        });
+
+        // Next link functionality
+        document.getElementById('next-link').addEventListener('click', function() {
+            window.history.forward();
+        });
+
+        // Redirect link functionality
+        document.getElementById('redirect-link').addEventListener('click', function() {
+            window.location.href = 'https://www.nkxgen.com';
+        });
+
+        // History link functionality
+        document.getElementById('history-link').addEventListener('click', function() {
+            const historyLength = window.history.length;
+            alert(`Number of entries in history: ${historyLength}`);
+        });
+
+        // Reload link functionality
+        document.getElementById('reload-link').addEventListener('click', function() {
+            window.location.reload();
+        });
+    </script>
+</body>
+</html>
