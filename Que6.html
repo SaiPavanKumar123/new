@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Display</title>
+</head>
+<body>
+    <h1>JSON Display</h1>
+    <pre id="json-output"></pre>
+
+    <script>
+        const jsonString = `
+            [
+                {
+                    "id": 1,
+                    "name": "Product 1",
+                    "price": 10.99,
+                    "image": "product1.jpg"
+                },
+                {
+                    "id": 2,
+                    "name": "Product 2",
+                    "price": 15.99,
+                    "image": "product2.jpg"
+                },
+                {
+                    "id": 3,
+                    "name": "Product 3",
+                    "price": 5.99,
+                    "image": "product3.jpg"
+                }
+            ]
+        `;
+
+        const displayJson = (jsonString) => {
+            try {
+                const jsonData = JSON.parse(jsonString);
+                const table = document.createElement('table');
+                table.innerHTML = `
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Image</th>
+                    </tr>
+                `;
+
+                jsonData.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.id}</td>
+                        <td>${item.name}</td>
+                        <td>${item.price}</td>
+                        <td>${item.image}</td>
+                    `;
+                    table.appendChild(row);
+                });
+
+                document.getElementById('json-output').appendChild(table);
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
+            }
+        };
+
+        // Call the displayJson function with the provided JSON string
+        displayJson(jsonString);
+    </script>
+</body>
+</html>
