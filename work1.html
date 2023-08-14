@@ -1,0 +1,213 @@
+//=============================================================================================================================
+//index.html file
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+</head>
+<body>
+
+<form method=get action=Webproj1>
+<div class="row">
+<div class="card">
+<div class="card-body">
+<h4>Product 1</h4>
+<img src="https://img.freepik.com/premium-photo/phone-mobile-application-development-concept-mobile-internet-3d-illustration_76964-5164.jpg" id=imi>
+ <p>Price: 150000rs </p>
+ <input type="button" value="Add cart">
+</div>
+</div>
+
+
+<div class="card">
+<div class="card-body">
+<h4>Product 2</h4>
+<img src="https://m.media-amazon.com/images/I/61Kw9gcax9L._AC_UF1000,1000_QL80_.jpg" id=im1>
+ <p>Price: 15000rs </p>
+ <input type="button" value="Add cart">
+ </div>
+ </div>
+ </div><br><br>
+ <div class="row">
+ <div class="card">
+<div class="card-body">
+<h4>Product 3</h4>
+<img src="https://www.kawaiies.com/cdn/shop/products/kawaiies-plushies-plush-softtoy-pink-bunny-plush-slippers-new-accessories-pink-bunny-980695.jpg?v=1611165316" id=im2>
+ <p>Price: 1500rs </p>
+ <input type="button" value="Add cart">
+ </div>
+ </div>
+
+ 
+
+ <div class="card">
+<div class="card-body">
+<h4>Product 4</h4>
+<img src="https://4.imimg.com/data4/QU/HY/MY-2281434/tissue-box.jpg" id=im3>
+ <p>Price: 1500rs </p>
+ <input type="button" value="Add cart">
+ </div>
+ </div>
+ </div>
+ <button id="cartButton" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#cartModal">Cart</button>
+ 
+ 
+ 
+<style>
+ body {
+            
+            justify-content: center;
+            text-align:center;
+            min-height: 100vh;
+            
+            background-color: #f7f7f7;
+        }
+        .card {
+           height:200px;
+            max-width: 200px;
+            margin-left: 100px;
+        }
+#imi{
+width:150px;
+height:100px;
+}
+#im1{
+width:150px;
+height:100px;
+}
+#im2{
+width:150px;
+height:100px;
+}
+
+#im3{
+width:150px;
+height:100px;
+}
+
+</style>
+
+<script>
+const addToCartButtons = document.querySelectorAll("input[type='button'][value='Add cart']");
+const cartItems = [];
+let totalPrice = 0;
+
+const cartItemsContainer = document.getElementById("cart-items");
+const totalPriceElement = document.getElementById("total-price");
+
+addToCartButtons.forEach((button, index) => {
+    button.addEventListener("click", () => {
+        const productCard = button.closest(".card-body");
+        const productName = productCard.querySelector("h4").textContent;
+        const productPrice = parseInt(productCard.querySelector("p").textContent.split(" ")[1]);
+
+        cartItems.push({ name: productName, price: productPrice });
+        totalPrice += productPrice;
+
+        updateCart();
+    });
+});
+
+function updateCart() {
+    cartItemsContainer.innerHTML = "";
+    cartItems.forEach((item, index) => {
+        const listItem = document.createElement("li");
+        listItem.classList.add("list-group-item");
+        listItem.textContent = `${index + 1}. ${item.name} - ${item.price}rs`;
+        cartItemsContainer.appendChild(listItem);
+    });
+
+    totalPriceElement.textContent = `Total: ${totalPrice}rs`;
+}
+</script>
+
+
+</body>
+</html>
+
+//==================================================================================================================================================
+
+//Webproj1.java file:
+
+package web1;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class Webproj1 extends HttpServlet {
+	private List<Map<String, Object>> products = new ArrayList<>();
+	private List<Map<String, Object>> cartItems = new ArrayList<>();
+	private int totalPrice = 0;
+
+	@Override
+	public void init() throws ServletException {
+		// Initialize your products list here
+		products.add(createProduct("Product 1", 150000));
+		products.add(createProduct("Product 2", 15000));
+		products.add(createProduct("Product 3", 1500));
+		products.add(createProduct("Product 4", 1500));
+	}
+
+	private Map<String, Object> createProduct(String name, int price) {
+		Map<String, Object> product = new HashMap<>();
+		product.put("name", name);
+		product.put("price", price);
+		return product;
+	}
+
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String action = request.getParameter("action");
+
+		if (action != null && action.equals("addToCart")) {
+			int productIndex = Integer.parseInt(request.getParameter("productIndex"));
+			Map<String, Object> selectedProduct = products.get(productIndex);
+			cartItems.add(selectedProduct);
+			totalPrice += (int) selectedProduct.get("price");
+		}
+
+		request.setAttribute("cartItems", cartItems);
+		request.setAttribute("totalPrice", totalPrice);
+
+		if (action != null && action.equals("cart")) {
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/cart.jsp");
+			dispatcher.forward(request, response);
+		} else {
+			request.setAttribute("products", products);
+			RequestDispatcher dispatcher = request.getRequestDispatcher("index.html");
+			dispatcher.forward(request, response);
+		}
+	}
+}
+//==================================================================================================================================================
+        we.xml
+
+        <?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+    <display-name>Webproject1</display-name>
+    
+  <servlet>
+        <servlet-name>Webproj1</servlet-name>
+        <servlet-class>web1.Webproj1</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Webproj1</servlet-name>
+        <url-pattern>/Webproj1</url-pattern>
+    </servlet-mapping>
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+</web-app>
