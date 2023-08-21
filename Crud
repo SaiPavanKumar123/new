@@ -1,0 +1,292 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.sql.*" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Employee</title>
+</head>
+<body>
+	<center>
+    	<form action="" method="post">
+    		<h1><u>Employee(CRUD)</u></h1><br/>
+    		<b>Emp No : </b><input type="text" name="empNo" /><br /><br />
+        	<b>Name : </b><input type="text" name="name" /><br /><br />
+        	<b>Job : </b><input type="text" name="job" /><br /><br />
+    		<button type="submit" id="firstButton" value="first">First</button>
+    		<button type="submit" id="nextButton" value="next">Next</button>
+    		<button type="submit" id="prevButton" value="prev">Previous</button>
+    		<button type="submit" id="lastButton" value="last">Last</button>
+    		<button type="submit" id="addButton" value="add">Add</button>
+    		<button type="submit" id="editButton" value="edit">Edit</button>
+    		<button type="submit" id="deleteButton" value="delete">Delete</button>
+    		<button type="submit" id="saveButton" value="save">Save</button>
+    		<button type="submit" id="clearButton" value="clear">Clear</button>
+    		<button type="submit" id="exitButton" value="exit">Exit</button>
+		</form>
+    </center>
+    <% String buttonAction = request.getParameter("buttonAction");
+    
+    class Employee {
+        private String empNo;
+        private String name;
+        private String job;
+
+        public String getEmpNo() {
+            return empNo;
+        }
+
+        public void setEmpNo(String empNo) {
+            this.empNo = empNo;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getJob() {
+            return job;
+        }
+
+        public void setJob(String job) {
+            this.job = job;
+        }
+    }
+     
+    if (session.getAttribute("employeesList") == null) {
+        session.setAttribute("employeesList", new ArrayList<Employee>());
+    }
+    if (session.getAttribute("recordCount") == null) {
+        session.setAttribute("recordCount", 0);
+    }
+
+    ArrayList<Employee> employeesList = (ArrayList<Employee>) session.getAttribute("employeesList");
+    int recordCount = (int) session.getAttribute("recordCount");
+     
+    if (buttonAction != null) { 
+        try {
+            Class.forName("org.postgresql.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:postgresql://192.168.110.48.5332/plf_training?user=plf_training_admin&password=pff123");
+
+            switch (buttonAction) { 
+                case "first": 
+               	 PreparedStatement firstStmt = connection.prepareStatement("SELECT * FROM R_Employees ORDER BY emp_no LIMIT 1");
+                    ResultSet firstRs = firstStmt.executeQuery();
+                    if (firstRs.next()) {
+                        Employee employee = new Employee();
+                        employee.setEmpNo(firstRs.getString("emp_no"));
+                        employee.setName(firstRs.getString("name"));
+                        employee.setJob(firstRs.getString("job"));
+                    }
+                    break; 
+                case "next": 
+                	if (employeesList.size() > 0) {
+                        int currentIndex = recordCount % employeesList.size();
+                        currentIndex = (currentIndex + 1) % employeesList.size();
+                        Employee nextEmployee = employeesList.get(currentIndex);
+                        
+                        String nextEmpNo = nextEmployee.getEmpNo();
+                        String nextName = nextEmployee.getName();
+                        String nextJob = nextEmployee.getJob();
+                        
+                    }
+                    break;
+                case "prev": 
+                	if (employeesList.size() > 0) {
+                        int currentIndex = recordCount % employeesList.size();
+                        currentIndex = (currentIndex - 1 + employeesList.size()) % employeesList.size();
+                        Employee prevEmployee = employeesList.get(currentIndex);
+                        
+                        String prevEmpNo = prevEmployee.getEmpNo();
+                        String prevName = prevEmployee.getName();
+                        String prevJob = prevEmployee.getJob();
+                        
+                    }
+                    break; 
+                case "last": 
+                    PreparedStatement lastStmt = connection.prepareStatement("SELECT * FROM R_Employees ORDER BY emp_no DESC LIMIT 1");
+                    ResultSet lastRs = lastStmt.executeQuery();
+                    if (lastRs.next()) {
+                        String empNo = lastRs.getString("emp_no");
+                        String name = lastRs.getString("name");
+                        String job = lastRs.getString("job");
+                    }
+                    break; 
+                case "add": 
+               		String empNoToAdd = request.getParameter("empNo");
+                    String nameToAdd = request.getParameter("name");
+                    String jobToAdd = request.getParameter("job");
+
+                    PreparedStatement addStmt = connection.prepareStatement("INSERT INTO R_Employees (emp_no, name, job) VALUES (?, ?, ?)");
+                    addStmt.setString(1, empNoToAdd);
+                    addStmt.setString(2, nameToAdd);
+                    addStmt.setString(3, jobToAdd);
+
+                    int rowsAdded = addStmt.executeUpdate();
+                    if (rowsAdded > 0) {
+                        Employee employee = new Employee();
+                        employee.setEmpNo(empNoToAdd);
+                        employee.setName(nameToAdd);
+                        employee.setJob(jobToAdd);
+                        employeesList.add(employee);
+                    }
+                    recordCount++;
+                    session.setAttribute("recordCount", recordCount);
+                    break; 
+                case "edit": 
+                    String editedEmpNo = request.getParameter("empNo");
+                    String editedName = request.getParameter("name");
+                    String editedJob = request.getParameter("job");
+                    PreparedStatement editStmt = connection.prepareStatement("UPDATE R_Employees SET name=?, job=? WHERE emp_no=?");
+                    editStmt.setString(1, editedName);
+                    editStmt.setString(2, editedJob);
+                    editStmt.setString(3, editedEmpNo);
+                    int rowsUpdated = editStmt.executeUpdate();
+                    break; 
+                case "delete": 
+                    String deleteEmpNo = request.getParameter("empNo");
+                    PreparedStatement deleteStmt = connection.prepareStatement("DELETE FROM employees WHERE emp_no=?");
+                    deleteStmt.setString(1, deleteEmpNo);
+                    int rowsDeleted = deleteStmt.executeUpdate();
+                    recordCount--;
+                    session.setAttribute("recordCount", recordCount);
+                    break; 
+                case "save": 
+                	%>
+                	<div id="successMessage" style="display:block;">
+                	    <center>
+                	        <h2>Employee details were saved successfully!</h2>
+                	    </center>
+                	</div>
+                	<!--  <script>
+                	    document.getElementById("successMessage").style.display = "block";
+                	</script>-->
+                	<%
+                	String empNoToSave = request.getParameter("empNo");
+                    String nameToSave = request.getParameter("name");
+                    String jobToSave = request.getParameter("job");
+
+                    PreparedStatement saveStmt = connection.prepareStatement("UPDATE R_Employees SET name=?, job=? WHERE emp_no=?");
+                    saveStmt.setString(1, nameToSave);
+                    saveStmt.setString(2, jobToSave);
+                    saveStmt.setString(3, empNoToSave);
+                    int rowsSaved = saveStmt.executeUpdate();
+                    break; 
+                case "clear": 
+                	request.setAttribute("empNo", "");
+                    request.setAttribute("name", "");
+                    request.setAttribute("job", "");
+                    break; 
+                case "exit": 
+                	%>
+                	<div id="exitMessage" style="display:block;">
+                	    <center>
+                	        <h2>Thank you!</h2>
+                	    </center>
+                	</div>
+                	<!--  <script>
+                	    document.getElementById("exitMessage").style.display = "block";
+                	</script>-->
+                	<%
+                    break; 
+            } 
+
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+	}
+     /*if (buttonAction != null) { 
+        switch (buttonAction) { 
+        	case "first": 
+        		// Implement first button functionality 
+        		break; 
+        	case "next": 
+        		// Implement next button functionality 
+        		break; 
+        	case "prev": 
+        		// Implement next button functionality 
+        		break; 
+        	case "last": 
+        		// Implement next button functionality 
+        		break; 
+        	case "add": 
+        		// Implement next button functionality 
+        		break; 
+        	case "edit": 
+        		// Implement next button functionality 
+        		break; 
+        	case "delete": 
+        		// Implement next button functionality 
+        		break; 
+        	case "save": 
+        		// Implement next button functionality 
+        		break; 
+        	case "clear": 
+        		// Implement next button functionality 
+        		break; 
+        	case "exit": 
+        		// Implement next button functionality 
+        		break; 
+        } 
+	}*/%>
+</body>
+</html>
+
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Employee</title>
+    </head>
+    <body>
+        <center>
+            <h1><u>Employee(CRUD)</u></h1>
+            <br />
+            <form action="employee.jsp" method="post">
+                <b>Emp No : </b><input type="text" name="empNo" /><br /><br />
+                <b>Name : </b><input type="text" name="name" /><br /><br />
+                <b>Job : </b><input type="text" name="job" /><br /><br />
+                <button type="submit" name="buttonAction" value="first">First</button>
+                <button type="submit" name="buttonAction" value="next">Next</button>
+                <!-- Add other buttons and actions here -->
+            </form>
+        </center>
+        <% String buttonAction = request.getParameter("buttonAction"); if (buttonAction != null) { switch (buttonAction) { case "first": // Implement first button functionality break; case "next": // Implement next button functionality break; // Add cases for other buttons and actions } } %>
+    </body>
+</html>
+
+<!--<html>
+	<head>
+		<title>Employee</title>
+	</head>
+	<body>
+		<form>
+		<center>
+			<h1><u>Employee(CRUD)</u></h1><br>
+			<b>Emp No : </b><input type=text></input><br><br>
+			<b>Name : </b><input type=text></input><br><br>
+			<b>Job : </b><input type=text></input><br><br>
+			<button type="button">First</button>
+			<button type="button">Next</button>
+			<button type="button">Prev</button>
+			<button type="button">Last</button><br><br>
+			<button type="button">Add</button>
+			<button type="button">Edit</button>
+			<button type="button">Del</button>
+			<button type="button">Save</button><br><br>
+			<button type="button">Clear</button>
+			<button type="button">Exit</button>
+		</center>
+		</form>
+	</body>
+</html>-->
