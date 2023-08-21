@@ -1,0 +1,198 @@
+// index.html
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<center>
+		<label>Name :<input type="text" id="name"></label><br>
+		<br> <label>enum :<input type="text" id="enum"></label><br>
+		<br> <label>sal :<input type="text" id="sal"></label><br>
+		<br> <label>job :<input type="text" id="job"></label><br>
+		<br> <label>dept :<input type="text" id="dept"></label><br>
+		<br>
+
+		<button id="first" onclick="First()">First</button>
+		<button id="last" onclick="Last()">Last</button>
+		<button id="add" onclick="Add()">Add</button>
+	</center>
+	<script>
+		function First(){
+			var x=new XMLHttpRequest();
+			x.open('GET','Servlet?button=First','true');
+			x.onreadystatechange=function(){
+				if(x.readyState===4){
+					var data=JSON.parse(x.responseText);
+					document.getElementById("name").value=data.name;
+					document.getElementById("enum").value=data.eno;
+					document.getElementById("sal").value=data.sal;
+					document.getElementById("job").value=data.job;
+					document.getElementById("dept").value=data.dept;
+				}
+			}
+			x.send();
+		}
+		function Last(){
+			var x=new XMLHttpRequest();
+			x.open('GET','Servlet?button=Last','true');
+			x.onreadystatechange=function(){
+				if(x.readyState===4){
+					var data=JSON.parse(x.responseText);
+					document.getElementById("name").value=data.name;
+					document.getElementById("enum").value=data.eno;
+					document.getElementById("sal").value=data.sal;
+					document.getElementById("job").value=data.job;
+					document.getElementById("dept").value=data.dept;
+				}
+			}
+			x.send();
+		}
+	
+	</script>
+</body>
+</html>
+
+//Servlet
+
+package Crud;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONObject;
+
+/**
+ * Servlet implementation class Servlet
+ */
+@WebServlet("/Servlet")
+public class Servlet extends HttpServlet {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		JDBC j = new JDBC();
+		ArrayList<Employee> res = j.getAllEmployees();
+		String u = request.getParameter("button");
+		if (u.equals("First")) {
+			Employee e = res.get(0);
+			JSONObject jo = new JSONObject();
+			jo.put("name", e.getName());
+			jo.put("eno", e.getEno());
+			jo.put("sal", e.getSal());
+			jo.put("job", e.getJob());
+			jo.put("dept", e.getDept());
+			response.getWriter().write(jo.toString());
+		} else if (u.equals("Last")) {
+			Employee e = res.get(res.size() - 1);
+			JSONObject jo = new JSONObject();
+			jo.put("name", e.getName());
+			jo.put("eno", e.getEno());
+			jo.put("sal", e.getSal());
+			jo.put("job", e.getJob());
+			jo.put("dept", e.getDept());
+			response.getWriter().write(jo.toString());
+		}
+	}
+
+}
+
+//jdbc
+
+package Crud;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+public class JDBC {
+	public ArrayList<Employee> getAllEmployees() {
+		ArrayList<Employee> res = null;
+		Connection c = null;
+		Statement s = null;
+		ResultSet rs = null;
+		try {
+			Class.forName("org.postgresql.Driver");
+			c = DriverManager.getConnection(
+					"jdbc:postgresql://192.168.110.48:5432/plf_training?user=plf_training_admin&password=pff123");
+			s = c.createStatement();
+			rs = s.executeQuery("select * from ServEmp");
+			res = new ArrayList<>();
+			while (rs.next()) {
+				res.add(new Employee(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4),
+						rs.getString(5)));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return res;
+	}
+
+}
+
+//Employee
+
+package Crud;
+
+public class Employee {
+	String name, eno, sal, job, dept;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getEno() {
+		return eno;
+	}
+
+	public void setEno(String eno) {
+		this.eno = eno;
+	}
+
+	public String getSal() {
+		return sal;
+	}
+
+	public void setSal(String sal) {
+		this.sal = sal;
+	}
+
+	public String getJob() {
+		return job;
+	}
+
+	public void setJob(String job) {
+		this.job = job;
+	}
+
+	public String getDept() {
+		return dept;
+	}
+
+	public void setDept(String dept) {
+		this.dept = dept;
+	}
+
+	public Employee(String name, String eno, String sal, String job, String dept) {
+		super();
+		this.name = name;
+		this.eno = eno;
+		this.sal = sal;
+		this.job = job;
+		this.dept = dept;
+	}
+
+}
