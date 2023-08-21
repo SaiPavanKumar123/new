@@ -1,0 +1,261 @@
+AddEmployeeServlet:
+
+package com.MVC;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class AddEmployeeServlet
+ */
+@WebServlet("/AddEmployeeServlet")
+public class AddEmployeeServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public AddEmployeeServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		try {
+			int empno = Integer.parseInt(request.getParameter("empno"));
+			String ename = request.getParameter("ename");
+			String job = request.getParameter("job");
+			double sal = Double.parseDouble(request.getParameter("sal"));
+			EmployeeDAL edal = new EmployeeDAL();
+			edal.addEmployee(empno, ename, job, sal);
+			response.sendRedirect(request.getContextPath() + "/MVCServlet");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+}
+===================================================================================================================
+
+EmployeeDAL
+package com.MVC;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+public class EmployeeDAL {
+	public List<Employee_class> getAllEmpDetails() {
+		int eno;
+		String name, ejob;
+		double esal;
+		ArrayList<Employee_class> edetails = new ArrayList<>();
+
+		String url, query;
+
+		try {
+			Class.forName("org.postgresql.Driver");
+
+			url = "jdbc:postgresql://192.168.110.48:5432/plf_training?user=plf_training_admin&password=pff123";
+
+			Connection conn = DriverManager.getConnection(url);
+			query = "select * from pavan";
+			Statement st = conn.createStatement();
+			ResultSet rst = st.executeQuery(query);
+
+			while (rst.next()) {
+
+				eno = rst.getInt("empno");
+				name = rst.getString("ename");
+				ejob = rst.getString("job");
+				esal = rst.getDouble("sal");
+
+				Employee_class e = new Employee_class();
+				e.setEmpno(eno);
+				e.setEname(name);
+				e.setJob(ejob);
+				e.setSal(esal);
+
+				edetails.add(e);
+
+			}
+			rst.close();
+			conn.close();
+
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return edetails;
+	}
+
+	public void addEmployee(int empno, String ename, String job, double sal) {
+		String url = "jdbc:postgresql://192.168.110.48:5432/plf_training?user=plf_training_admin&password=pff123";
+
+		try (Connection conn = DriverManager.getConnection(url)) {
+			String que = "Insert into pavan(empno,ename,job,sal) VALUES (?,?,?,?)";
+			PreparedStatement ps = conn.prepareStatement(que);
+			ps.setInt(1, empno);
+			ps.setString(2, ename);
+			ps.setString(3, job);
+			ps.setDouble(4, sal);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+
+		}
+	}
+}
+=======================================================================================================================================
+
+inndex.jsp
+
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List, com.MVC.Employee_class" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Details</title>
+</head>
+<body>
+    <h1>Employee Details</h1>
+    <form action="AddEmployeeServlet" method="post">
+        <label>Employee number</label>
+        <input type="text" name="empno"><br>
+        <label>Employee name</label>
+        <input type="text" name="ename"><br>
+        <label>Job</label>
+        <input type="text" name="job"><br>
+        <label>Salary</label>
+        <input type="number" name="sal"><br>
+        <input type="submit" value="Add Employee">
+    </form>
+   
+    <br><br>
+    <table border="1px black" border-collapse="collapse">
+        <tr>
+            <th width="100px">Emp No.</th>
+            <th width="400px">Emp Name</th>
+            <th width="100px">Job</th>
+            <th width="100px">Salary</th>
+        </tr>
+        <%
+            List<Employee_class> edetails = (List<Employee_class>) request.getAttribute("employeeList");
+            for (Employee_class k : edetails) {
+        %>
+        <tr>
+            <td><%= k.getEmpno() %></td>
+            <td><%= k.getEname() %></td>
+            <td><%= k.getJob() %></td>
+            <td><%= k.getSal() %></td>
+        </tr>
+        <%
+            }
+        %>
+    </table>
+</body>
+</html>
+
+========================================================================================================================
+
+MVCServlet/mainServlet
+
+package com.MVC;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/MVCServlet")
+public class MVCServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	public MVCServlet() {
+		super();
+	}
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		RequestDispatcher rd = null;
+
+		try {
+			EmployeeDAL edal = new EmployeeDAL();
+			List<Employee_class> ed = edal.getAllEmpDetails();
+			request.setAttribute("employeeList", ed);
+
+			rd = request.getRequestDispatcher("/index.jsp");
+			rd.forward(request, response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+}
+=============================================================================================================================
+
+Employee.java
+
+package com.MVC;
+
+public class Employee_class {
+
+	private int emp_no;
+	private String ename;
+	private String job;
+	private double sal;
+
+	public int getEmpno() {
+		return emp_no;
+	}
+
+	public void setEmpno(int empno) {
+		this.emp_no = empno;
+	}
+
+	public String getEname() {
+		return ename;
+	}
+
+	public void setEname(String ename) {
+		this.ename = ename;
+	}
+
+	public String getJob() {
+		return job;
+	}
+
+	public void setJob(String job) {
+		this.job = job;
+	}
+
+	public double getSal() {
+		return sal;
+	}
+
+	public void setSal(double sal) {
+		this.sal = sal;
+	}
+
+}
+
