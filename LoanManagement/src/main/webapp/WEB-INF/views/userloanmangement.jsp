@@ -61,10 +61,11 @@
 
     <div class="menu">
         <ul>
-            
-            <li><a href="http://localhost:8081/LoanManagement/loans">Loans</a></li>
-            <li><a href="#">Repayments</a></li>
-            <li><a href="#">Contact</a></li>
+            <li><a href="http://localhost:9010/LoanManagement/userapplications?userid=<%=request.getAttribute("userid") %>">My Loan Applications</a></li>
+            <li><a href="http://localhost:9010/LoanManagement/loans">Loans</a></li>
+            <li><a href="http://localhost:9010/LoanManagement/totalemis?userid=<%=request.getAttribute("userid") %>">Total EMIs</a></li>
+            <li><a href="http://localhost:9010/LoanManagement/customer">Apply For Loan</a></li>
+            <li><a href="http://localhost:9010/LoanManagement/checkeligibility">Check Eligibilty</a></li>
         </ul>
     </div>
     <div class="content">
@@ -92,6 +93,7 @@
     </div>
   </div>
 </nav>
+
         
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>

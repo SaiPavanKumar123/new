@@ -100,12 +100,12 @@
 
    <body>
     <h1 align="top" style="font-family:times-roman;">
-        Welcome to Pennant Bank Loan Dashboard
+        Welcome to World Bank 
     </h1>
 	 <div class="container">
         <div class="row">
             <div class="col-md-4">
-                <a href="account-information.html" class="dashboard-link">
+                <a href="http://localhost:9010/LoanManagement/myinformation?userid=<%=request.getAttribute("userid") %>" class="dashboard-link">
                     <div class="dashboard-card">
                         <h2>My Account Information</h2>
                         <p>View your account details.</p>
@@ -121,9 +121,9 @@
                 </a>
             </div>
             <div class="col-md-4">
-                <a href="emis.html" class="dashboard-link">
+                <a href="http://localhost:9010/LoanManagement/totalemis?userid=<%=request.getAttribute("userid") %>" class="dashboard-link">
                     <div class="dashboard-card">
-                        <h2>My EMIs</h2>
+                        <h2>Total EMIs</h2>
                         <p>Check your Equated Monthly Installments.</p>
                     </div>
                 </a>
@@ -131,7 +131,7 @@
         </div>
         <div class="row">
             <div class="col-md-4">
-                <a href="applied-loans.html" class="dashboard-link">
+                <a href="http://localhost:9010/LoanManagement/appliedloans?userid=<%=request.getAttribute("userid") %>" class="dashboard-link">
                     <div class="dashboard-card">
                         <h2>Applied Loans</h2>
                         <p>View your loan applications.</p>

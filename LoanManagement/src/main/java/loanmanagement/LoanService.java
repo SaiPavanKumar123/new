@@ -56,20 +56,33 @@ public class LoanService {
 
 		List<User> ls = loanDAO.getAllCredentials();
 		String type = "";
-		int id;
+		
 		for (User c : ls) {
 			if (c.getUsername().equals(user) && password.equals(c.getPassword())) {
-				id = c.getUserid();
-				if ("admin".equals(c.getUsertype())) {
-					type = "admin";
-				} else {
-					type = "user";
-				}
+				
+				type=c.getUsertype();
 				break;
 			}
 		}
 
 		return type;
+	}
+	
+	
+	public int findUserId(String username,String password) {
+		
+		List<User> ls = loanDAO.getAllCredentials();
+		int userid=0;
+		
+		for (User c : ls) {
+			if (c.getUsername().equals(username) && password.equals(c.getPassword())) {
+				
+				userid=c.getUserid();
+				break;
+			}
+		}
+		
+		return userid;
 	}
 
 	//getting all applications
@@ -324,8 +337,76 @@ public class LoanService {
 	}
 	
 	
+	//calculating the emis for the loan 
+	@Transactional
+	public void emiCalcilation(int applicantid) {
+		
+		List<Loan> appList=loanDAO.findAll();
+		Loan loan=new Loan();
+		//finding respective applicant using for loop
+		for(Loan ln:appList) {
+			
+			if(ln.getApplicantid()==applicantid) {
+				loan=ln;
+				break;
+			}
+		}
+		double principleAmount = loan.getAmountreq();
+		double rateOfInterestPerYear = 0;
+
+		if (loan.getLoantype() == 1) {
+		    rateOfInterestPerYear = 7.2;
+		} else if (loan.getLoantype() == 2) {
+		    rateOfInterestPerYear = 10.5;
+		} else {
+		    rateOfInterestPerYear = 8.85;
+		}
+
+		double rateOfInterestPerMonth = ((rateOfInterestPerYear) / 12.0) / 100.0;
+		int noOfMonthsForLoanPay = loan.getMonthsreq();
+
+		// EMI for each month calculated formula = P * R * (1 + R)^N / ((1+R)^N-1)
+		// P = PRINCIPLE AMOUNT
+		// R = RATE OF INTEREST FOR MONTH
+		// N = NO OF MOTHS THAT EMI SHOULD PAY OR LOAN TENURE FOR MONTHS
+		double eachEmiAmount = (principleAmount * rateOfInterestPerMonth * Math.pow(1 + rateOfInterestPerMonth, noOfMonthsForLoanPay)) / (Math.pow(1 + rateOfInterestPerMonth, noOfMonthsForLoanPay) - 1);
+
+		double totalRepay = eachEmiAmount * noOfMonthsForLoanPay;
+
+		LoanEMIMaster emi=new LoanEMIMaster();
+		emi.setApplicantid(applicantid);
+		emi.setEmiIntrest(rateOfInterestPerYear);
+		emi.setNoOfEmis(noOfMonthsForLoanPay);
+		emi.setSanctionedAmount(loan.getAmountreq());
+		emi.setRepayAmount(totalRepay);
+		
+		
+		LoanEMISchedule emischedule=new LoanEMISchedule();
+		emischedule.setApplicantid(applicantid);
+		emischedule.setEmiAmount(eachEmiAmount);
+		emischedule.setEmiIndex(0);
+		emischedule.setEmiDate(null);
+		
+		loanDAO.addEmiMaster(emi);
+		loanDAO.addEmiSchedule(emischedule);
+		
+		
+	}
+	
+	
+	//getting all santioned loans from the emi master table
+	public List<LoanEMIMaster> getAllEMIs(){
+		
+		return loanDAO.getAllEMIsMaseters();
+		
+	}
+	
+	
 	
 	public void checkEligibility(Eligibilty el) {
+		
+		
+		
 		
 	}
 	

@@ -74,7 +74,7 @@ public class LoanController {
 	}
 
 	@RequestMapping(value = "/verify", method = RequestMethod.GET)
-	public String verify(Credentials cred) {
+	public String verify(Credentials cred,Model mod) {
 
 		if (!loanServ.verifyCredentials(cred.getUser(), cred.getPassword())) {
 
@@ -82,15 +82,25 @@ public class LoanController {
 		} else {
 			System.out.println("!else");
 			if ("admin".equals(loanServ.verifyuser(cred.getUser(), cred.getPassword()))) {
+				mod.addAttribute("userid",loanServ.findUserId(cred.getUser(), cred.getPassword()));
 				return "loanmanagement";
 			} else {
 
-				return "userloanmangement";
+				mod.addAttribute("userid",loanServ.findUserId(cred.getUser(), cred.getPassword()));
+				return "home";
 			}
 
 		}
 
 	}
+	
+	@RequestMapping(value = "/appliedloans", method = RequestMethod.GET)
+	public String appiedApplicants(Model mod) {
+
+		mod.addAttribute("applications", loanServ.getAllApplication());
+		return "userloanmangement";
+	}
+	
 
 	@RequestMapping(value = "/applications", method = RequestMethod.GET)
 	public String applicants(Model mod) {
@@ -106,6 +116,16 @@ public class LoanController {
 		mod.addAttribute("applicant", loanServ.getLoanApplicant(id));
 		return "oneapplicant";
 	}
+	
+	
+	@RequestMapping(value = "/userapplicant", method = RequestMethod.GET)
+	public String userApplicant(@RequestParam("applicant") String appid, Model mod) {
+
+		int id = Integer.parseInt(appid);
+		mod.addAttribute("applicant", loanServ.getLoanApplicant(id));
+		return "userapplicant";
+	}
+	
 
 	@RequestMapping(value = "/updateapplication", method = RequestMethod.GET)
 	public String updateApplication(@RequestParam("status") String status, @RequestParam("applicantid") int id,
@@ -235,6 +255,32 @@ public class LoanController {
 		
 		mod.addAttribute("applications",loanServ.searchDate(datefrom,dateto));
 		return "applications";
+	}
+	
+	
+	@RequestMapping(value = "/emicalculation", method = RequestMethod.GET)
+	public String calculateEmi(@RequestParam("applicantid") int applicantid) {
+
+		loanServ.emiCalcilation(applicantid);
+		
+		return "userapplications";
+	}
+	
+	@RequestMapping(value = "/userapplications", method = RequestMethod.GET)
+	public String userapplicants(@RequestParam("userid") int id,Model mod) {
+		
+		mod.addAttribute("userid",id);
+		mod.addAttribute("applications", loanServ.getAllApplication());
+		return "userapplications";
+	}
+	
+	
+	@RequestMapping(value = "/totalemis", method = RequestMethod.GET)
+	public String totalEMIs(@RequestParam("userid") int id,Model mod) {
+		
+		mod.addAttribute("userid",id);
+		mod.addAttribute("emimaster",loanServ.getAllEMIs());
+		return "totalemis";
 	}
 	
 	

@@ -17,21 +17,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-@Service
-@WebFilter("/LoanManagementFilter")
+
 public class LoanManagementFilter extends HttpFilter implements Filter {
        
-   
-	@PersistenceContext
-	private EntityManager emt;
-
-
+  
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		
-		
+	/*	
 		String user=request.getParameter("user");
 		String password=request.getParameter("password");
-		List<User> userList=emt.createQuery("select user from User user").getResultList();
+		//List<User> userList=emt.createQuery("select user from User user").getResultList();
 		System.out.println("ajay");
 		
 		
@@ -51,7 +46,7 @@ public class LoanManagementFilter extends HttpFilter implements Filter {
 
 		System.out.println("after");
 		
-		
+		*/
 		
 	}
 

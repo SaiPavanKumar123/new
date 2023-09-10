@@ -17,6 +17,15 @@ public class LoanDAO implements LoanDAOContractor {
 	public void addCustomer(LoanCustomer loanc) {
 		emt.persist(loanc);
 	}
+	
+	
+	public void addEmiMaster(LoanEMIMaster emi) {
+		emt.persist(emi);
+	}
+	
+	public void addEmiSchedule(LoanEMISchedule emi) {
+		emt.persist(emi);
+	}
 
 	public List<Loan> findAll() {
 		return emt.createQuery("SELECT e FROM Loan e").getResultList();
@@ -59,6 +68,14 @@ public class LoanDAO implements LoanDAOContractor {
 		query.setParameter("status", status);
 		query.setParameter("applicantid", id);
 		query.executeUpdate();
+
+	}
+
+
+	@Override
+	public List<LoanEMIMaster> getAllEMIsMaseters() {
+		
+		return emt.createQuery("select emi from LoanEMIMaster emi").getResultList();
 
 	}
 

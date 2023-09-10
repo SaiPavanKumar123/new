@@ -66,7 +66,7 @@
                 <input type="number" class="form-control" id="disposalIncome" name="disposalIncome" required>
             </div>
             <div class="form-group">
-                <label for="cibilScore">Annual Income</label>
+                <label for="cibilScore">Cibil Score</label>
                 <input type="number" class="form-control" id="cibilScore" name="cibilScore" required>
             </div>
             <button type="button" class="btn btn-check-eligibility">Check Eligibility</button>

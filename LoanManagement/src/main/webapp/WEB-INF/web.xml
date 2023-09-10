@@ -21,15 +21,7 @@
     </servlet-mapping>
     
     
-    <filter>
-    <filter-name>myFilter</filter-name>
-    <filter-class>loanmanagement.LoanManagementFilter</filter-class>
-</filter>
-<filter-mapping>
-    <filter-name>myFilter</filter-name>
-    <url-pattern>/adminlogin</url-pattern>
-</filter-mapping>
-    
+   
   
 
 </web-app>
