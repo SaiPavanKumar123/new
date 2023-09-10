@@ -24,6 +24,51 @@ public class LoanController {
 		this.loanServ = loanServ;
 	}
 
+	@RequestMapping(value = "/adminlogin", method = RequestMethod.GET)
+	public String adminlogin() {
+
+		return "adminlogin";
+	}
+
+	@RequestMapping(value = "/verify", method = RequestMethod.GET)
+	public String verify(Credentials cred,Model mod) {
+
+		if (!loanServ.verifyCredentials(cred.getUser(), cred.getPassword())) {
+
+			return "adminlogin";
+		} else {
+			System.out.println("!else");
+			if ("admin".equals(loanServ.verifyuser(cred.getUser(), cred.getPassword()))) {
+				mod.addAttribute("userid",loanServ.findUserId(cred.getUser(), cred.getPassword()));
+				return "loanmanagement";
+			} else {
+
+				mod.addAttribute("userid",loanServ.findUserId(cred.getUser(), cred.getPassword()));
+				return "home";
+			}
+
+		}
+
+
+		@RequestMapping(value = "/customerlogin", method = RequestMethod.GET)
+	public String customerlogin() {
+
+		
+		return "customerlogin";
+	}
+
+		@RequestMapping(value = "/customerverify", method = RequestMethod.GET)
+	public String customerverify(Credentials cred) {
+
+		if(cred.getUser().equals("ajay")&&"12345".equals(cred.getPassword())) {
+			return "home";
+		}
+		else {
+			return "customerlogin";
+		}
+		
+	}
+	
 	@RequestMapping(value = "/customer", method = RequestMethod.GET)
 	public String customer() {
 
@@ -67,30 +112,9 @@ public class LoanController {
 
 	}
 
-	@RequestMapping(value = "/adminlogin", method = RequestMethod.GET)
-	public String adminlogin() {
+	
 
-		return "adminlogin";
-	}
-
-	@RequestMapping(value = "/verify", method = RequestMethod.GET)
-	public String verify(Credentials cred,Model mod) {
-
-		if (!loanServ.verifyCredentials(cred.getUser(), cred.getPassword())) {
-
-			return "adminlogin";
-		} else {
-			System.out.println("!else");
-			if ("admin".equals(loanServ.verifyuser(cred.getUser(), cred.getPassword()))) {
-				mod.addAttribute("userid",loanServ.findUserId(cred.getUser(), cred.getPassword()));
-				return "loanmanagement";
-			} else {
-
-				mod.addAttribute("userid",loanServ.findUserId(cred.getUser(), cred.getPassword()));
-				return "home";
-			}
-
-		}
+	
 
 	}
 	
@@ -148,12 +172,7 @@ public class LoanController {
 	}
 	
 	
-	@RequestMapping(value = "/customerlogin", method = RequestMethod.GET)
-	public String customerlogin() {
-
-		
-		return "customerlogin";
-	}
+	
 	
 	@RequestMapping(value = "/checkeligibility", method = RequestMethod.GET)
 	public String eligibility() {
@@ -171,17 +190,7 @@ public class LoanController {
 	
 
 	
-	@RequestMapping(value = "/customerverify", method = RequestMethod.GET)
-	public String customerverify(Credentials cred) {
-
-		if(cred.getUser().equals("ajay")&&"12345".equals(cred.getPassword())) {
-			return "home";
-		}
-		else {
-			return "customerlogin";
-		}
-		
-	}
+	
 	
 	
 	@RequestMapping(value = "/namefilter", method = RequestMethod.GET)
