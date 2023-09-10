@@ -43,6 +43,8 @@
         .content {
             margin-left: 220px; 
             padding: 20px;
+            height:100%;
+            background-image:url(https://static.vecteezy.com/system/resources/previews/013/070/008/non_2x/woman-hand-using-mobile-smart-phone-online-payment-banking-and-online-shopping-at-the-home-free-photo.jpg);
             
         }
 
@@ -68,30 +70,7 @@
         </ul>
     </div>
     <div class="content">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Home</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
-      <ul class="navbar-nav">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Search by
-          </a>
-          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-           <li><a class="dropdown-item" href="http://localhost:9010/LoanManagement/namefilter">By Name</a></li>
-            <li><a class="dropdown-item" href="http://localhost:9010/LoanManagement/mobilefilter">By Mobile</a></li>
-            <li><a class="dropdown-item" href="http://localhost:9010/LoanManagement/datefilter">Date Range</a></li>
-            <li><a class="dropdown-item" href="http://localhost:9010/LoanManagement/amountfillter">Amount Range</a></li>
-            <li><a class="dropdown-item" href="http://localhost:9010/LoanManagement/loantypefilter">Loan Type</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
+       
         
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>

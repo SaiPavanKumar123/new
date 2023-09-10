@@ -403,10 +403,13 @@ public class LoanService {
 	
 	
 	
-	public void checkEligibility(Eligibilty el) {
+	public double checkAmountEligibility(Eligibilty el) {
 		
+		double eligibleAmount=0;
 		
+		eligibleAmount=el.getDisposalIncome()*el.getMonthsReq();
 		
+		return eligibleAmount;
 		
 	}
 	

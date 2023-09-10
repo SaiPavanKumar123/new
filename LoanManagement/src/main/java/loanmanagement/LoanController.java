@@ -95,8 +95,9 @@ public class LoanController {
 	}
 	
 	@RequestMapping(value = "/appliedloans", method = RequestMethod.GET)
-	public String appiedApplicants(Model mod) {
+	public String appiedApplicants(@RequestParam("userid") int id,Model mod) {
 
+		mod.addAttribute("userid",id);
 		mod.addAttribute("applications", loanServ.getAllApplication());
 		return "userloanmangement";
 	}
@@ -163,10 +164,18 @@ public class LoanController {
 	}
 	
 	@RequestMapping(value = "/checkloan", method = RequestMethod.GET)
-	public String checkloan(Eligibilty eligibiltyDetails) {
+	public String checkloan(Eligibilty eligibiltyDetails,Model mod) {
 
-		
-		return "eligibility";
+		if(eligibiltyDetails.getCibilScore()<750) {
+			return "noteligible";
+		}
+		else {
+			double amount=loanServ.checkAmountEligibility(eligibiltyDetails);
+			mod.addAttribute("amount",amount);
+			mod.addAttribute("emi",eligibiltyDetails.getDisposalIncome()/2);
+			mod.addAttribute("months",eligibiltyDetails.getMonthsReq());
+		return "eligible";
+		}
 	}
 	
 
@@ -282,6 +291,8 @@ public class LoanController {
 		mod.addAttribute("emimaster",loanServ.getAllEMIs());
 		return "totalemis";
 	}
+	
+	
 	
 	
 }

@@ -54,8 +54,14 @@
                 <input type="number" class="form-control" id="amountReq" name="amountReq" required>
             </div>
             <div class="form-group">
-                <label for="monthsReq">Number of Months to Pay</label>
-                <input type="number" class="form-control" id="monthsReq" name="monthsReq" required>
+               <label for="monthsReq">No Of Months</label>
+                <select class="form-control" id="monthsReq" name="monthsReq" required>
+                    <option value="" disabled selected>Select months</option>
+                    <option value="12">12</option>
+                    <option value="24">24</option>
+                    <option value="32">32</option>
+                    <option value="48">48</option>
+                </select>
             </div>
             <div class="form-group">
                 <label for="annualIncome">Annual Income</label>
@@ -69,7 +75,7 @@
                 <label for="cibilScore">Cibil Score</label>
                 <input type="number" class="form-control" id="cibilScore" name="cibilScore" required>
             </div>
-            <button type="button" class="btn btn-check-eligibility">Check Eligibility</button>
+            <button class="btn btn-check-eligibility">Check Eligibility</button>
         </form>
     </div>
 
