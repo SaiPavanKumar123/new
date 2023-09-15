@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<center>
+<button onclick="getdata()">Get employee data</button><br><br>
+<label>Employee Id <input type="text" id="empNo" name="empNo"></label><br>
+	<label>Dept No:<input type="text" id="deptNo" name="deptNo"></label><br>
+	<label>Job <input type="text" id="job" name="job"></label><br>
+	<label>Salary<input type="text" id="salary" name="salary"></label><br>
+	<label>Emp Name<input type="text" id="eName" name="eName"></label><br>
+	<button class="btn btn-primary" id="first" onclick="first()">First</button>
+	<button class="btn btn-success" id="Next" onclick="Next()">Next</button>
+	<button class="btn btn-primary" id="last" onclick="last()">Last</button>
+	<button class="btn btn-success" id="prev" onclick="prev()">Prev</button>
+	<button class="btn btn-primary" id="Add" onclick="add()">Add</button>
+	
+
+<table class="table table-striped" style="width:800px;" id="table" border="1px">
+<tr>
+
+	<th scope="col">Employee number</th>
+	<th scope="col">Dept no:</th>
+	<th scope="col">Job </th>
+	<th scope="col">Salary</th>
+	<th scope="col">Employee name</th>
+	</tr>	
+	<tbody id="tbody"></tbody>
+
+
+</table>
+</center>
+<script>
+var count=0;
+var p=0;
+	function getdata(){
+		var xhr=new XMLHttpRequest();
+		xhr.open("GET","/employees",true);
+		
+		xhr.onreadystatechange=function(){
+			if(p==0){
+			console.log("ksdnjsk");
+			if(xhr.readyState===4 && xhr.status===200){
+				console.log(status);
+				var json=JSON.parse(xhr.responseText);
+				console.log(json);
+				var table=document.getElementById("table");
+				var tbody=document.getElementById("tbody");
+				json.forEach(function(x){
+					var body=document.createElement("tr");
+					var data1=document.createElement("td");
+					var data2=document.createElement("td");
+					var data3=document.createElement("td");
+					var data4=document.createElement("td");
+					var data5=document.createElement("td");
+					var data6=document.createElement("button");
+					var data7=document.createElement("button");
+					data1.textContent=x.empNo;
+					data2.textContent=x.deptNo;
+					
+					data3.textContent=x.job;
+					data4.textContent=x.salary;
+					data5.textContent=x.eName;
+					data6.textContent="delete";
+					data6.onclick=function(){
+						deleteemp(x.empNo);
+					};
+					
+					data7.textContent="edit";
+					data7.onclick=function(){
+						updateEmp(x.empNo);
+					};
+					body.appendChild(data1);
+					body.appendChild(data2);
+					body.appendChild(data3);
+					body.appendChild(data4);
+					body.appendChild(data5);
+					body.appendChild(data6);
+					body.appendChild(data7);
+					tbody.append(body);
+					
+				});
+				p++;
+				
+			}
+		
+			
+		}
+		}
+		
+		xhr.send();
+	}
+	
+	function updateEmp(id){
+		
+	}
+	
+	
+	function deleteemp(id){
+		var xhr=new XMLHttpRequest();
+		xhr.open("DELETE","/employees/"+id,true);
+		xhr.send();
+		xhr.onreadystatechange=function(){
+			
+			if(xhr.readyState===4 && xhr.status===200){
+				alert("deleted data");
+				location.reload();
+			}
+			
+		}
+		getdata();
+		
+	}
+	
+	
+	
+	function first(){
+		
+		var xhr=new XMLHttpRequest();
+		xhr.open("GET","/employees",true);
+
+		xhr.onreadystatechange=function(){
+			
+			console.log("ksdnjsk");
+			if(xhr.readyState===4 && xhr.status===200){
+				console.log("hgdyue");
+				
+				var data=JSON.parse(xhr.responseText);
+				console.log("hgdyue");
+				
+					var index = 0;
+					console.log(index);
+				var id=document.getElementById('empNo');
+				var dept=document.getElementById('deptNo');
+				var job=document.getElementById('job');
+				var sal=document.getElementById('salary');
+				var ename=document.getElementById('eName');
+				
+			//	var employees=data(0);
+				id.value=data[index].empNo;
+				dept.value=data[index].deptNo;
+				job.value=data[index].job;
+				console.log(dept.value);
+				sal.value=data[index].salary;
+				ename.value=data[index].eName;
+				
+				count=index;
+				console.log(count);
+			}
+			
+			
+		}
+		xhr.send();
+		document.getElementById("empNo").readOnly=true;
+		document.getElementById("deptNo").readOnly=true;
+		document.getElementById("job").readOnly=true;
+		document.getElementById("salary").readOnly=true;
+		document.getElementById("eName").readOnly=true;
+		
+	}
+	function Next(){
+		
+		var xhr=new XMLHttpRequest();
+
+	
+		xhr.open("GET","/employees",true);
+		xhr.onreadystatechange=function(){
+			
+			if(xhr.readyState===4 && xhr.status===200){
+				
+				var data=JSON.parse(xhr.responseText);
+				if(count<data.length-1)
+					{
+					count++;
+				var id=document.getElementById('empNo');
+				var dept=document.getElementById('deptNo');
+				var job=document.getElementById('job');
+				var sal=document.getElementById('salary');
+				var ename=document.getElementById('eName');
+				
+				id.value=data[count].empNo;
+				dept.value=data[count].deptNo;
+				job.value=data[count].job;
+				console.log(dept.value);
+				sal.value=data[count].salary;
+				ename.value=data[count].eName;
+				
+				
+				console.log(count);
+			}
+			}
+			
+		}
+		xhr.send();
+		document.getElementById("empNo").readOnly=true;
+		document.getElementById("deptNo").readOnly=true;
+		document.getElementById("job").readOnly=true;
+		document.getElementById("salary").readOnly=true;
+		document.getElementById("eName").readOnly=true;
+	}
+	
+function last(){
+		
+		var xhr=new XMLHttpRequest();
+		xhr.open("GET","/employees",true);
+
+		xhr.onreadystatechange=function(){
+			
+			console.log("ksdnjsk");
+			if(xhr.readyState===4 && xhr.status===200){
+				console.log("hgdyue");
+				
+				var data=JSON.parse(xhr.responseText);
+				console.log("hgdyue");
+				
+					var count = data.length-1;
+					
+					//console.log(index);
+				var id=document.getElementById('empNo');
+				var dept=document.getElementById('deptNo');
+				var job=document.getElementById('job');
+				var sal=document.getElementById('salary');
+				var ename=document.getElementById('eName');
+				
+			//	var employees=data(0);
+				id.value=data[count].empNo;
+				dept.value=data[count].deptNo;
+				job.value=data[count].job;
+				//console.log(dept.value);
+				sal.value=data[count].salary;
+				ename.value=data[count].eName;
+				
+				count=5;
+				
+				console.log(count);
+			}
+			
+			
+		}
+		xhr.send();
+		document.getElementById("empNo").readOnly=true;
+		document.getElementById("deptNo").readOnly=true;
+		document.getElementById("job").readOnly=true;
+		document.getElementById("salary").readOnly=true;
+		document.getElementById("eName").readOnly=true;
+		
+	}
+	
+function prev(){
+	
+	var xhr=new XMLHttpRequest();
+	xhr.open("GET","/employees",true);
+
+	xhr.onreadystatechange=function(){
+		
+		
+		if(xhr.readyState===4 && xhr.status===200){
+		
+			
+			var data=JSON.parse(xhr.responseText);
+		
+			if(count>0){
+				count--;
+				//console.log(count);
+			var id=document.getElementById('empNo');
+			var dept=document.getElementById('deptNo');
+			var job=document.getElementById('job');
+			var sal=document.getElementById('salary');
+			var ename=document.getElementById('eName');
+			
+		//	var employees=data(0);
+			id.value=data[count].empNo;
+			dept.value=data[count].deptNo;
+			job.value=data[count].job;
+			console.log(dept.value);
+			sal.value=data[count].salary;
+			ename.value=data[count].eName;
+			
+			//console.log(count);
+			}
+		}
+		
+		
+		
+	}
+	xhr.send();
+	document.getElementById("empNo").readOnly=true;
+	document.getElementById("deptNo").readOnly=true;
+	document.getElementById("job").readOnly=true;
+	document.getElementById("salary").readOnly=true;
+	document.getElementById("eName").readOnly=true;
+	
+}
+
+function add(){
+	var empdata={
+			empNo:document.getElementById("empNo").value, 
+			deptNo:document.getElementById("deptNo").value, 
+			job:document.getElementById("job").value, 
+			salary:document.getElementById("salary").value, 
+			eName:document.getElementById("eName").value, 
+	};
+	
+	var xhr=new XMLHttpRequest();
+	xhr.open("POST","/employees",true);
+	xhr.setRequestHeader("Content-Type", "application/json");
+	var data=JSON.stringify(empdata);
+	console.log(data);
+	xhr.onreadystatechange=function(){
+		if(xhr.readyState===4 && xhr.status===201){
+			var add=xhr.responseText;
+			alert("Employee is created successfully");
+			console.log(data);
+			location.reload();
+		}
+		
+	}
+	xhr.send(data);
+	
+	getdata();
+}
+
+
+
+</script>
+</body>
+</html>
